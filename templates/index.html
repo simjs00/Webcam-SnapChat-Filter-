@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html style="background: orange">
+<head>
+<meta charset="utf-8">
+<meta content="stuff, to, help, search, engines, not" name="keywords">
+<meta content="What this page is about." name="description">
+<meta content="Display Webcam Stream" name="title">
+<title>Display Webcam Stream</title>
+  
+<style>
+#container {
+    margin: 0px auto;
+    /*width: 500px;*/
+
+    width: 50%;
+    left: 0px;
+    height: 375*2px;
+    border: 10px #333 solid;
+    /*float: left;*/
+    position: absolute;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden
+}
+#container2 {
+    margin: 0px auto;
+   /* width: 500px;*/
+    width: 50%;
+    right: 0px;
+    height: 375*2px;
+    border: 10px #333 solid;
+    position: absolute;
+    /*float: right;*/
+    visibility: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden
+}
+#videoElement {
+	flex-shrink: 0;
+    min-width: 100%;
+    min-height: 100%
+    background-color: #666;
+}
+
+#screenshot-img {
+	flex-shrink: 0;
+    min-width: 100%;
+    min-height: 100%;
+
+    background-color: #666;
+    /*width: 500px;height: 375px;*/
+}
+#header {
+	text-align: center;
+	font-size: 40px;
+}
+#input{    
+	text-align:center
+
+   
+}    
+#screenshot-button{    
+	height: 40px;
+	width: 100px;
+   
+}    
+label
+{
+	font-size: 25px;
+	
+}
+</style>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+</head>
+  
+<body>
+
+<h2 id="header">Snapchat Sprite Filter Webcam</h2>
+<div  id="input">
+	<input type="radio" name="opt" value="1"> <label>Hat</label>
+	<input type="radio" name="opt" value="2"> <label>Moustache</label>
+	<input type="radio" name="opt" value="3"> <label>Glasses </label>
+	<input type="radio" name="opt" value="4"> <label>Flies </label>
+	<input type="radio" name="opt" value="5"> <label>Dog </label>
+	<input type="radio" name="opt" value="6"> <label>Rainbow </label><br><br>
+	<button  id="screenshot-button">Capture</button>
+</div>
+<div  id="container">
+    <video autoplay="true" id="videoElement">
+     
+    </video>
+    
+    
+    <canvas style="display:none;"></canvas>
+
+</div>
+<div   id="container2">
+<img  id="screenshot-img">
+</div>
+<input  type="hidden" id="url2" value="{{url_for('process')}}">
+</body>
+
+<script>
+	var video = document.querySelector("#videoElement"); 
+	const button = document.querySelector('#screenshot-button');
+	const img = document.querySelector('#screenshot-img');
+	const canvas = document.createElement('canvas');
+	var opt =0;
+
+	$('input[name="opt"]').change(function(){
+    	opt=$(this).val()
+	});
+	button.onclick = video.onclick = function() {
+
+			query();
+			$("#container2").css("visibility", "visible");
+
+	};
+	function query()
+	{
+			canvas.width = video.videoWidth;
+			canvas.height = video.videoHeight;
+			canvas.getContext('2d').drawImage(video, 0, 0);
+
+			$.ajax({ 
+						type:'POST',
+					    url : $("#url2").val() , 
+
+					    data :{
+					    	 imageBase64: canvas.toDataURL(''),
+					    	 option : opt,
+					    },
+					   success: function(b64data){
+						console.log("SUKSES");
+
+						//'image/png;base64,'+
+						img.src = "data:image/jpg;base64,"+b64data;
+
+					   // $("#bg").attr("src", "data:image/jpg;base64,"+b64data);
+						},
+					    error: function(b64data){
+						console.log(b64data);
+
+						}
+					    
+					},
+					
+				
+
+					);
+			
+	}
+	video.ontimeupdate  = function() {
+		
+	  
+	};
+
+	navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia || navigator.oGetUserMedia;
+	 
+	if (navigator.getUserMedia) {       
+	    navigator.getUserMedia({video: true}, handleVideo, videoError);
+	}
+	 
+	function handleVideo(stream) {
+	    video.src = window.URL.createObjectURL(stream);
+
+		  
+	}
+	 
+	function videoError(e) {
+
+	    // do something
+	}
+</script>
+</body>
+</html>

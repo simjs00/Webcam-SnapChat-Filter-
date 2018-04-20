@@ -1,0 +1,98 @@
+<html>
+  <head>
+    <title>Video Streaming Demonstration</title>
+   
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
+  </head>
+  <body>
+    <h1>Video Streaming Demonstration</h1>
+
+ 	<img id="bg" src="">
+
+ 
+    <button  id="btn1" onclick ="stop(1)"  type="submit">Forward</button>
+
+
+
+    <button  id="btn2" onclick="stop(0)"  type="submit">ori</button>
+   
+
+	<input  type="hidden" id="url" value="{{ url_for('set_option') }}">
+	<input  type="hidden" id="url2" value="{{ url_for('video_feed') }}?opt=">
+   
+
+  </body>
+</html>
+
+<script type="text/javascript">
+	
+function stop(id)
+{
+	$.ajax({ 
+		type: "GET",
+	    url : $("#url2").val()+id , 
+	    processData : false,
+	   	async :false
+	    
+	}).always(function(b64data){
+		console.log("test");
+	   console.log(b64data);
+	    $("#bg").attr("src", "data:image/jpg;base64,"+b64data);
+	});
+
+	//document.getElementById("bg").remove();
+
+	//location.reload();
+	//window.location =document.getElementById("url").value +"?opt="+id;
+/*	document.getElementById('btn1').insertAdjacentHTML("beforebegin","<img id='bg' src=''>");
+	
+	document.getElementById("bg").src = document.getElementById("url").value + "?opt="+id;*/
+	
+}
+
+
+
+button.onclick = video.onclick = function() {
+
+	canvas.width = video.videoWidth;
+	canvas.height = video.videoHeight;
+	canvas.getContext('2d').drawImage(video, 0, 0);
+	/*var frame = canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height);
+	console.log(frame.data);*/
+	// Other browsers will fall back to image/png
+	//img.src = canvas.toDataURL('image/webp');
+	//dataType: 'json',
+	//contentType: 'application/json;charset=UTF-8',
+	//JSON.stringify(data)
+	//var data= {};
+
+	//data['img'] = canvas.toDataURL('');
+	$.ajax({ 
+				type:'POST',
+			    url : $("#url2").val() , 
+
+			    data :{
+			    	 imageBase64: canvas.toDataURL('')
+			    },
+			   success: function(b64data){
+				console.log("SUKSES");
+				//'image/png;base64,'+
+				img.src = "data:image/jpg;base64,"+b64data;
+
+			   // $("#bg").attr("src", "data:image/jpg;base64,"+b64data);
+				},
+			    error: function(b64data){
+				console.log(b64data);
+				}
+			    
+			},
+			
+		
+
+			);
+
+
+};
+
+</script>
